@@ -1,0 +1,1 @@
+docker image tag ex-simple-build jcjesus/simple-build:1.0
