@@ -1,0 +1,29 @@
+version: "3"
+volumes:
+  dados:
+services:
+  db:
+    image: postgres:9.6
+    volumes:
+      # Volume dos dados
+      - dados:/var/lib/postgresql/data
+      # Scripts
+      - ./scripts:/scripts
+      - ./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
+  frontend:
+    image: nginx:1.13
+    volumes:
+      # Site
+      - ./web:/usr/share/nginx/html/
+      # Configuração do proxy reverso
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+
+    ports:
+      - 80:80
+  app:
+    image: python:3.6
+    volumes:
+      # aplicação
+      - ./app:/app
+    working_dir: /app
+    command: bash ./app.sh
