@@ -15,5 +15,8 @@
     "express": "^4.15.3",
     "mongoose": "^8.12.1",
     "node-restful": "^0.2.6"
+  },
+  "resolutions": {
+    "underscore": "^1.13.6"
   }
 }
