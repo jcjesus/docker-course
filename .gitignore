@@ -1,1 +1,3 @@
 .vscode/
+node-mongo-compose/backend/node_modules
+node-mongo-compose/frontend/node_modules
