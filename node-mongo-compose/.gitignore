@@ -7,11 +7,6 @@ logs
 *.log
 npm-debug.log*
 
-# Arquivos de dependências
-package-lock.json
-/package-lock.json
-node-mongo-compose/package-lock.json
-
 # Arquivos do sistema
 .DS_Store
 Thumbs.db
