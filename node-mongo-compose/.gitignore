@@ -1,3 +1,26 @@
 .vscode/
-backend/node_modules
-frontend/node_modules
+node-mongo-compose/backend/node_modules
+node-mongo-compose/frontend/node_modules
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Arquivos de dependências
+package-lock.json
+/package-lock.json
+node-mongo-compose/package-lock.json
+
+# Arquivos do sistema
+.DS_Store
+Thumbs.db
+
+# Arquivos de ambiente
+.env
+.env.local
+.env.*.local
+
+# Diretórios de build
+/dist
+/build
