@@ -1,32 +1,91 @@
 const express = require('express')
-const restful = require('node-restful')
-const server = express()
-const mongoose = restful.mongoose
+const mongoose = require('mongoose')
 const bodyParser = require('body-parser')
 const cors = require('cors')
 
-// Database
-mongoose.Promise = global.Promise
-// Conexão
-mongoose.connect('mongodb://db/mydb', { useMongoClient: true })
-
+const app = express()
 
 // Middlewares
-server.use(bodyParser.urlencoded({ extended: true }))
-server.use(bodyParser.json())
-server.use(cors())
+app.use(bodyParser.urlencoded({ extended: true }))
+app.use(bodyParser.json())
+app.use(cors())
 
-// ODM
-const Client = restful.model('Client', {
+// Model
+const clientSchema = new mongoose.Schema({
   name: { type: String, required: true }
 })
 
-// Rest API
-Client.methods(['get', 'post', 'put', 'delete'])
-Client.updateOptions({ new: true, runValidators: true })
+const Client = mongoose.model('Client', clientSchema)
 
 // Routes
-Client.register(server, '/clients')
+app.get('/clients', async (req, res) => {
+  try {
+    const clients = await Client.find()
+    res.json(clients)
+  } catch (error) {
+    res.status(500).json({ error: error.message })
+  }
+})
 
-// Start server
-server.listen(3000)
+app.get('/clients/:id', async (req, res) => {
+  try {
+    const client = await Client.findById(req.params.id)
+    if (!client) {
+      return res.status(404).json({ error: 'Client not found' })
+    }
+    res.json(client)
+  } catch (error) {
+    res.status(500).json({ error: error.message })
+  }
+})
+
+app.post('/clients', async (req, res) => {
+  try {
+    const client = new Client(req.body)
+    await client.save()
+    res.status(201).json(client)
+  } catch (error) {
+    res.status(400).json({ error: error.message })
+  }
+})
+
+app.put('/clients/:id', async (req, res) => {
+  try {
+    const client = await Client.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true, runValidators: true }
+    )
+    if (!client) {
+      return res.status(404).json({ error: 'Client not found' })
+    }
+    res.json(client)
+  } catch (error) {
+    res.status(400).json({ error: error.message })
+  }
+})
+
+app.delete('/clients/:id', async (req, res) => {
+  try {
+    const client = await Client.findByIdAndDelete(req.params.id)
+    if (!client) {
+      return res.status(404).json({ error: 'Client not found' })
+    }
+    res.json(client)
+  } catch (error) {
+    res.status(500).json({ error: error.message })
+  }
+})
+
+// Connect to MongoDB
+const connectDB = async (uri) => {
+  try {
+    await mongoose.connect(uri)
+    console.log('Connected to MongoDB')
+  } catch (error) {
+    console.error('MongoDB connection error:', error)
+    process.exit(1)
+  }
+}
+
+module.exports = { app, connectDB }
