@@ -64,9 +64,10 @@ app.post('/clients', async (req, res) => {
 
 app.put('/clients/:id', async (req, res) => {
   try {
+    const validatedBody = validateRequestBody(req.body);
     const client = await Client.findByIdAndUpdate(
       req.params.id,
-      { $set: req.body },
+      { $set: validatedBody },
       { new: true, runValidators: true }
     )
     if (!client) {
@@ -99,6 +100,17 @@ const connectDB = async (uri) => {
     console.error('MongoDB connection error:', error)
     process.exit(1)
   }
+}
+
+const validateRequestBody = (body) => {
+  const allowedFields = ['name'];
+  const validatedBody = {};
+  for (const key in body) {
+    if (allowedFields.includes(key)) {
+      validatedBody[key] = body[key];
+    }
+  }
+  return validatedBody;
 }
 
 module.exports = { app, connectDB }
