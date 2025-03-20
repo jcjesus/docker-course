@@ -53,7 +53,7 @@ app.put('/clients/:id', async (req, res) => {
   try {
     const client = await Client.findByIdAndUpdate(
       req.params.id,
-      req.body,
+      { $set: req.body },
       { new: true, runValidators: true }
     )
     if (!client) {
