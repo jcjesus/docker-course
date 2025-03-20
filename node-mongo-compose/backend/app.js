@@ -2,13 +2,26 @@ const express = require('express')
 const mongoose = require('mongoose')
 const bodyParser = require('body-parser')
 const cors = require('cors')
+const rateLimit = require('express-rate-limit')
 
 const app = express()
+
+// Rate limiting configuration
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutos
+  max: 100, // limite de 100 requisições por windowMs
+  message: { error: 'Muitas requisições, por favor tente novamente mais tarde.' },
+  standardHeaders: true, // Retorna informações de rate limit nos headers
+  legacyHeaders: false, // Desabilita headers legados
+})
 
 // Middlewares
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 app.use(cors())
+
+// Aplicando rate limiting em todas as rotas
+app.use(limiter)
 
 // Model
 const clientSchema = new mongoose.Schema({
